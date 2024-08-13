@@ -18,7 +18,12 @@ Including another URLconf
 from debug_toolbar.toolbar import debug_toolbar_urls
 from django.contrib import admin
 from django.urls import path
+from django.urls.conf import include
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("api/books/", include("book.urls", namespace="book")),
+    path("api/borrowings/", include("borrowing.urls", namespace="borrowings")),
+    path("api/payment/", include("payment.urls", namespace="payment")),
+    path("api/user/", include("user.urls", namespace="user")),
 ] + debug_toolbar_urls()
