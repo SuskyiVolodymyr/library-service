@@ -59,7 +59,7 @@ class BorrowingReturnSerializer(serializers.ModelSerializer):
         return data
 
     def update(self, instance, validated_data):
-        instance.actual_return_date = validated_data['actual_return_date']
+        instance.actual_return_date = validated_data["actual_return_date"]
         instance.book.inventory += 1
         instance.book.save()
         instance.save()
