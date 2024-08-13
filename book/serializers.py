@@ -36,3 +36,9 @@ class BookSerializer(serializers.ModelSerializer):
                 instance.delete()
                 return book
         return super().update(instance, validated_data)
+
+
+class BookReadSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Book
+        fields = ["title", "author", "inventory"]
