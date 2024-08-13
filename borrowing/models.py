@@ -11,5 +11,9 @@ class Borrowing(models.Model):
     book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name="borrowings")
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="borrowings")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.book.title} borrowed by {self.user.email}"
+
+    @property
+    def is_active(self) -> bool:
+        return self.actual_return_date is None
