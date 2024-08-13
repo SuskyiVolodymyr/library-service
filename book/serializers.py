@@ -1,3 +1,4 @@
+from django.db import transaction
 from rest_framework import serializers
 
 from book.models import Book
@@ -28,9 +29,10 @@ class BookSerializer(serializers.ModelSerializer):
             cover=validated_data["cover"],
         ).exclude(id=instance.id)
         if book:
-            book = book[0]
-            book.inventory += validated_data["inventory"]
-            book.save()
-            instance.delete()
-            return book
+            with transaction.atomic():
+                book = book[0]
+                book.inventory += validated_data["inventory"]
+                book.save()
+                instance.delete()
+                return book
         return super().update(instance, validated_data)
