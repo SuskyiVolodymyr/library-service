@@ -15,9 +15,3 @@ class Book(models.Model):
 
     def __str__(self):
         return f"{self.title} by {self.author}"
-
-    @property
-    def full_information(self):
-        return (f"{self.title} by {self.author} in {self.cover} cover. "
-                f"Daily fee: {self.daily_fee}. "
-                f"Books you can borrow: {self.inventory}")
