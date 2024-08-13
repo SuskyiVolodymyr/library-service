@@ -1,3 +1,5 @@
+from datetime import date
+
 from django.db import transaction
 from rest_framework import serializers
 
@@ -29,8 +31,36 @@ class BorrowingCreateSerializer(serializers.ModelSerializer):
             book.save()
 
             borrowing = Borrowing.objects.create(
-                user=self.context['request'].user,
+                user=self.context["request"].user,
                 **validated_data
             )
 
             return borrowing
+
+
+class BorrowingReturnSerializer(serializers.ModelSerializer):
+    actual_return_date = serializers.DateField()
+
+    class Meta:
+        model = Borrowing
+        fields = ["actual_return_date"]
+
+    def validate_actual_return_date(self, value):
+        if value > date.today():
+            raise serializers.ValidationError("The actual return date cannot be in the future.")
+        return value
+
+    def validate(self, data):
+        borrowing = self.instance
+
+        if borrowing.actual_return_date is not None:
+            raise serializers.ValidationError("This book has already been returned.")
+
+        return data
+
+    def update(self, instance, validated_data):
+        instance.actual_return_date = validated_data['actual_return_date']
+        instance.book.inventory += 1
+        instance.book.save()
+        instance.save()
+        return instance
