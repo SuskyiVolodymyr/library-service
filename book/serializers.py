@@ -20,3 +20,9 @@ class BookSerializer(serializers.ModelSerializer):
             book.save()
             return book
         return Book.objects.create(**validated_data)
+
+
+class BookReadSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Book
+        fields = ["title", "author", "inventory"]
