@@ -50,7 +50,11 @@ class UserTests(TestCase):
         self.user.refresh_from_db()
         self.assertTrue(self.user.check_password("newpassword123"))
 
-
+    def test_retrieve_user(self):
+        url = reverse("user:manage")
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["email"], self.user.email)
 
 
 
