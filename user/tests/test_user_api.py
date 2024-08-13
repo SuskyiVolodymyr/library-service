@@ -43,7 +43,12 @@ class UserTests(TestCase):
         self.assertEqual(self.user.first_name, "Updated")
         self.assertEqual(self.user.last_name, "User")
 
-
+    def test_user_password_update(self):
+        url = reverse("user:manage")
+        data = {"password": "newpassword123"}
+        self.client.patch(url, data, format="json")
+        self.user.refresh_from_db()
+        self.assertTrue(self.user.check_password("newpassword123"))
 
 
 
