@@ -9,12 +9,28 @@ from borrowing.models import Borrowing
 
 class BorrowingSerializer(serializers.ModelSerializer):
     book = BookReadSerializer(read_only=True)
-    user = serializers.SlugRelatedField(many=False, read_only=True, slug_field="email")
+    user = serializers.SlugRelatedField(
+        many=False,
+        read_only=True,
+        slug_field="email"
+    )
 
     class Meta:
         model = Borrowing
-        fields = ["id", "borrow_date", "expected_return_date", "actual_return_date", "book", "user"]
-        read_only_fields = ["id", "borrow_date", "book", "user"]
+        fields = [
+            "id",
+            "borrow_date",
+            "expected_return_date",
+            "actual_return_date",
+            "book",
+            "user"
+        ]
+        read_only_fields = [
+            "id",
+            "borrow_date",
+            "book",
+            "user"
+        ]
 
 
 class BorrowingCreateSerializer(serializers.ModelSerializer):
@@ -47,14 +63,18 @@ class BorrowingReturnSerializer(serializers.ModelSerializer):
 
     def validate_actual_return_date(self, value):
         if value > date.today():
-            raise serializers.ValidationError("The actual return date cannot be in the future.")
+            raise serializers.ValidationError(
+                "The actual return date cannot be in the future."
+            )
         return value
 
     def validate(self, data):
         borrowing = self.instance
 
         if borrowing.actual_return_date is not None:
-            raise serializers.ValidationError("This book has already been returned.")
+            raise serializers.ValidationError(
+                "This book has already been returned."
+            )
 
         return data
 

@@ -4,7 +4,11 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import action
 from borrowing.models import Borrowing
-from borrowing.serializers import BorrowingCreateSerializer, BorrowingReturnSerializer, BorrowingSerializer
+from borrowing.serializers import (
+    BorrowingCreateSerializer,
+    BorrowingReturnSerializer,
+    BorrowingSerializer
+)
 
 
 class BorrowingViewSet(viewsets.ModelViewSet):
@@ -38,7 +42,10 @@ class BorrowingViewSet(viewsets.ModelViewSet):
         return queryset
 
     def create(self, request: Request, *args, **kwargs) -> Response:
-        serializer = BorrowingCreateSerializer(data=request.data, context={"request": request})
+        serializer = BorrowingCreateSerializer(
+            data=request.data,
+            context={"request": request}
+        )
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -51,4 +58,3 @@ class BorrowingViewSet(viewsets.ModelViewSet):
         serializer.save()
 
         return Response(serializer.data, status=status.HTTP_200_OK)
-
