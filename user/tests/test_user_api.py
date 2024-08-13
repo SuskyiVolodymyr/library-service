@@ -73,4 +73,11 @@ class UserTests(TestCase):
         self.assertIn("access", response.data)
 
 
+class UnAuthenticatedUserTests(TestCase):
+    def setUp(self):
+        self.client = APIClient()
 
+    def test_retrieve_user(self):
+        url = reverse("user:manage")
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
