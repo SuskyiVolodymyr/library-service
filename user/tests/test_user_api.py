@@ -3,6 +3,7 @@ from django.test import TestCase
 from django.contrib.auth import get_user_model
 from rest_framework import status
 from rest_framework.test import APIClient
+from rest_framework_simplejwt.tokens import RefreshToken
 
 
 class UserTests(TestCase):
@@ -32,4 +33,23 @@ class UserTests(TestCase):
             get_user_model().objects.get(email="newuser@example.com").email,
             "newuser@example.com",
         )
+
+    def test_update_user(self):
+        url = reverse("user:manage")
+        data = {"first_name": "Updated", "last_name": "User"}
+        response = self.client.patch(url, data, format="json")
+        self.user.refresh_from_db()
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(self.user.first_name, "Updated")
+        self.assertEqual(self.user.last_name, "User")
+
+
+
+
+
+
+
+
+
+
 
