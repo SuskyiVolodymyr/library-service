@@ -88,6 +88,6 @@ def telegram_payment_notification(
         f"User: {borrowing.user.email}\n"
         f"Books: {book_titles}\n"
         f"Payment type: {payment_type}\n"
-        f"Amount: {payment.money_to_pay}"
+        f"Amount: {payment.money_to_pay / 100:.2f}$"
     )
     send_message(message)

@@ -57,7 +57,9 @@ class PaymentViewSet(GenericViewSet, mixins.ListModelMixin, mixins.RetrieveModel
         return PaymentSerializer
 
     def get_queryset(self):
-        queryset = self.queryset.all()
+        queryset = self.queryset.select_related("borrowing__user").prefetch_related(
+            "borrowing__book"
+        )
         status = self.request.query_params.get("status")
         if status == "canceled":
             queryset = queryset.filter(status="3")
