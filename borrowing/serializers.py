@@ -1,6 +1,7 @@
 from datetime import date
 
 from django.db import transaction
+from django.utils import timezone
 from rest_framework import serializers
 
 from book.serializers import BookReadSerializer
@@ -37,6 +38,16 @@ class BorrowingCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Borrowing
         fields = ["expected_return_date", "book"]
+
+    def validate(self, attrs):
+        borrow_date = timezone.now().date()
+        expected_return_date = attrs.get("expected_return_date")
+
+        if expected_return_date < borrow_date:
+            raise serializers.ValidationError(
+                "The expected return date cannot be earlier than the borrowing date."
+            )
+        return attrs
 
     def create(self, validated_data):
         with transaction.atomic():
