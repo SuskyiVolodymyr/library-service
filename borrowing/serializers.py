@@ -9,7 +9,7 @@ from borrowing.models import Borrowing
 
 
 class BorrowingSerializer(serializers.ModelSerializer):
-    book = BookReadSerializer(read_only=True)
+    book = BookReadSerializer(read_only=True, many=True)
     user = serializers.SlugRelatedField(
         many=False,
         read_only=True,
@@ -51,16 +51,18 @@ class BorrowingCreateSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         with transaction.atomic():
-            book = validated_data.get("book")
-            if book.inventory <= 0:
-                raise serializers.ValidationError("Book is out of stock.")
-            book.inventory -= 1
-            book.save()
+            books = validated_data.pop("book")
+            for book in books:
+                if book.inventory <= 0:
+                    raise serializers.ValidationError("Book is out of stock.")
+                book.inventory -= 1
+                book.save()
 
-            borrowing = Borrowing.objects.create(
-                user=self.context["request"].user,
-                **validated_data
-            )
+                borrowing = Borrowing.objects.create(
+                    user=self.context["request"].user,
+                    **validated_data
+                )
+            borrowing.book.add(*books)
 
             return borrowing
 
@@ -94,6 +96,5 @@ class BorrowingReturnSerializer(serializers.ModelSerializer):
         for book in instance.book.all():
             book.inventory += 1
             book.save()
-
         instance.save()
         return instance
