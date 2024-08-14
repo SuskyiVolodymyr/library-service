@@ -38,6 +38,13 @@ class PaymentViewSet(GenericViewSet, mixins.ListModelMixin, mixins.RetrieveModel
 
     def get_queryset(self):
         queryset = self.queryset.all()
+        status = self.request.query_params.get("status")
+        if status == "canceled":
+            queryset = queryset.filter(status="3")
+        if status == "paid":
+            queryset = queryset.filter(status="2")
+        if status == "pending":
+            queryset = queryset.filter(status="1")
         if not self.request.user.is_staff:
             return queryset.filter(borrowing__user_id=self.request.user.id)
         return queryset
