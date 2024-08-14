@@ -27,6 +27,12 @@ class BookApiTests(TestCase):
             first_name="Admin",
             last_name="User"
         )
+        self.common_user = get_user_model().objects.create_user(
+            email="user@test.com",
+            password="password123",
+            first_name="Common",
+            last_name="User"
+        )
         self.client.force_authenticate(self.admin_user)
 
     def test_create_new_book_increases_inventory_if_exists(self):
@@ -115,3 +121,40 @@ class BookApiTests(TestCase):
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(res.data["inventory"], book.inventory)
+
+    def test_common_user_cannot_create_book(self):
+        self.client.force_authenticate(self.common_user)
+        payload = {
+            "title": "Unauthorized Book",
+            "author": "Unauthorized Author",
+            "cover": "HARD",
+            "inventory": 5,
+            "daily_fee": 5.99,
+        }
+
+        url = reverse("books:books-list")
+        res = self.client.post(url, payload)
+
+        self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_common_user_cannot_update_book(self):
+        self.client.force_authenticate(self.common_user)
+        book = sample_book()
+
+        payload = {
+            "title": "Updated Title",
+            "author": "Updated Author",
+        }
+
+        url = reverse("books:books-detail", args=[book.id])
+        res = self.client.patch(url, payload)
+
+        self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_unauthenticated_user_can_get_books_list(self):
+        self.client.force_authenticate(user=None)
+        url = reverse("books:books-list")
+
+        res = self.client.get(url)
+
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
