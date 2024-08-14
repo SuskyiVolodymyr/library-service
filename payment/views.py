@@ -24,7 +24,7 @@ class PaymentSuccessView(APIView):
             payment=payment,
             borrowing=borrowing,
             payment_status="Success payment",
-            payment_type="Payment",
+            payment_type=payment_type,
         )
         return JsonResponse({"message": "Payment was successful."})
 
@@ -42,7 +42,7 @@ class PaymentCancelView(APIView):
             payment=payment,
             borrowing=borrowing,
             payment_status="Canceled payment",
-            payment_type="Fine",
+            payment_type=payment_type,
         )
         return JsonResponse({"message": "Payment was canceled or failed."})
 
