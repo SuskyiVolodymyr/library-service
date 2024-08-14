@@ -18,19 +18,13 @@ def sample_book(**params):
     return Book.objects.create(**defaults)
 
 
-class BookApiTests(TestCase):
+class AdminBookTests(TestCase):
     def setUp(self):
         self.client = APIClient()
         self.admin_user = get_user_model().objects.create_superuser(
             email="admin@test.com",
             password="password123",
             first_name="Admin",
-            last_name="User"
-        )
-        self.common_user = get_user_model().objects.create_user(
-            email="user@test.com",
-            password="password123",
-            first_name="Common",
             last_name="User"
         )
         self.client.force_authenticate(self.admin_user)
@@ -97,7 +91,6 @@ class BookApiTests(TestCase):
         self.assertEqual(book1.inventory, 15)
 
     def test_create_new_book(self):
-        """Test creating a new book"""
         payload = {
             "title": "New Book",
             "author": "New Author",
@@ -121,6 +114,18 @@ class BookApiTests(TestCase):
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(res.data["inventory"], book.inventory)
+
+
+class UserBookTests(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.common_user = get_user_model().objects.create_user(
+            email="user@test.com",
+            password="password123",
+            first_name="Common",
+            last_name="User"
+        )
+        self.client.force_authenticate(self.common_user)
 
     def test_common_user_cannot_create_book(self):
         self.client.force_authenticate(self.common_user)
