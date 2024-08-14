@@ -1,44 +1,43 @@
-import stripe
-from django.conf import settings
 from django.http import JsonResponse
+from rest_framework import mixins
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
+from rest_framework.viewsets import GenericViewSet
 
-stripe.api_key = settings.STRIPE_SECRET_KEY
+from borrowing.models import Borrowing
+from payment.models import Payment
+from payment.serializers import PaymentSerializer, PaymentListSerializer
 
 
 class PaymentSuccessView(APIView):
     def get(self, request, *args, **kwargs):
+        borrowing = Borrowing.objects.get(id=kwargs["pk"])
+        payment = Payment.objects.get(borrowing_id=borrowing.id)
+        payment.status = "2"
+        payment.save()
         return JsonResponse({"message": "Payment was successful."})
 
 
 class PaymentCancelView(APIView):
     def get(self, request, *args, **kwargs):
+        borrowing = Borrowing.objects.get(id=kwargs["pk"])
+        payment = Payment.objects.get(borrowing_id=borrowing.id)
+        payment.status = "3"
+        payment.save()
         return JsonResponse({"message": "Payment was canceled or failed."})
 
 
-class CreateCheckoutSessionView(APIView):
-    def post(self, request, *args, **kwargs):
-        DOMAIN = "http://127.0.0.1:8000"
+class PaymentViewSet(GenericViewSet, mixins.ListModelMixin, mixins.RetrieveModelMixin):
+    queryset = Payment.objects.select_related("borrowing")
+    permission_classes = [IsAuthenticated]
 
-        try:
-            checkout_session = stripe.checkout.Session.create(
-                payment_method_types=["card"],
-                line_items=[
-                    {
-                        "price_data": {
-                            "currency": "usd",
-                            "product_data": {
-                                "name": "Book Borrowing Fee",
-                            },
-                            "unit_amount": 2000,  # e.g., $20.00
-                        },
-                        "quantity": 1,
-                    },
-                ],
-                mode="payment",
-                success_url=f"{DOMAIN}/api/payment/success/",
-                cancel_url=f"{DOMAIN}/api/payment/cancel/",
-            )
-            return JsonResponse({"checkout_url": checkout_session.url})
-        except Exception as e:
-            return JsonResponse({"error": str(e)}, status=400)
+    def get_serializer_class(self):
+        if self.action == "list":
+            return PaymentListSerializer
+        return PaymentSerializer
+
+    def get_queryset(self):
+        queryset = self.queryset.all()
+        if not self.request.user.is_staff:
+            return queryset.filter(borrowing__user_id=self.request.user.id)
+        return queryset
