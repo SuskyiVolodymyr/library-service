@@ -1,19 +1,19 @@
-from django.urls import path
+from django.urls import path, include
+from rest_framework import routers
 
 from payment.views import (
-    CreateCheckoutSessionView,
     PaymentSuccessView,
     PaymentCancelView,
+    PaymentViewSet,
 )
 
 app_name = "payment"
 
+router = routers.DefaultRouter()
+router.register("", PaymentViewSet)
+
 urlpatterns = [
-    path(
-        "create-checkout-session/",
-        CreateCheckoutSessionView.as_view(),
-        name="create-checkout-session",
-    ),
-    path("success/", PaymentSuccessView.as_view(), name="payment-success"),
-    path("cancel/", PaymentCancelView.as_view(), name="payment-cancel"),
+    path("success/<int:pk>/", PaymentSuccessView.as_view(), name="payment-success"),
+    path("cancel/<int:pk>/", PaymentCancelView.as_view(), name="payment-cancel"),
+    path("", include(router.urls)),
 ]
