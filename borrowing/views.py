@@ -14,7 +14,7 @@ from borrowing.serializers import (
 
 
 class BorrowingViewSet(viewsets.ModelViewSet):
-    queryset = Borrowing.objects.select_related("user", "book")
+    queryset = Borrowing.objects.select_related("user").prefetch_related("book")
     permission_classes = [IsAuthenticated]
 
     def get_serializer_class(self):

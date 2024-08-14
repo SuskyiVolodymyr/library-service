@@ -10,9 +10,8 @@ class Borrowing(models.Model):
     borrow_date = models.DateField(auto_now_add=True)
     expected_return_date = models.DateField()
     actual_return_date = models.DateField(blank=True, null=True)
-    book = models.ForeignKey(
+    book = models.ManyToManyField(
         Book,
-        on_delete=models.CASCADE,
         related_name="borrowings"
     )
     user = models.ForeignKey(
@@ -30,7 +29,7 @@ class Borrowing(models.Model):
         if is_new:
             message = (f"New borrowing created:\n"
                        f"User: {self.user.email}\n"
-                       f"Book: {self.book.title} by {self.book.author}\n"
+                       f"Book: {self.book}\n"
                        f"Borrow Date: {self.borrow_date}\n"
                        f"Expected Return Date: {self.expected_return_date}"
                        )
