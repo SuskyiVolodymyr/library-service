@@ -65,7 +65,7 @@ class BorrowingCreateSerializer(serializers.ModelSerializer):
                 )
             borrowing.book.add(*books)
 
-            book_titles = ', '.join([book.title for book in books])
+            book_titles = ", ".join([book.title for book in books])
             message = f"New borrowing created:\n" \
                       f"User: {borrowing.user.email}\n" \
                       f"Book: {book_titles}\n" \
