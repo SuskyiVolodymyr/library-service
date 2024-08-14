@@ -1,29 +1,49 @@
 from django.http import JsonResponse
 from rest_framework import mixins
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.request import Request
 from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet
 
 from borrowing.models import Borrowing
 from payment.models import Payment
+from payment.payment_helper import telegram_payment_notification
 from payment.serializers import PaymentSerializer, PaymentListSerializer
 
 
 class PaymentSuccessView(APIView):
     def get(self, request, *args, **kwargs):
         borrowing = Borrowing.objects.get(id=kwargs["pk"])
-        payment = Payment.objects.get(borrowing_id=borrowing.id)
+        payment_type = request.query_params["payment_type"]
+        payment = Payment.objects.get(
+            borrowing_id=borrowing.id, payment_type=payment_type
+        )
         payment.status = "2"
         payment.save()
+        telegram_payment_notification(
+            payment=payment,
+            borrowing=borrowing,
+            payment_status="Success payment",
+            payment_type="Payment",
+        )
         return JsonResponse({"message": "Payment was successful."})
 
 
 class PaymentCancelView(APIView):
-    def get(self, request, *args, **kwargs):
+    def get(self, request: Request, *args, **kwargs):
         borrowing = Borrowing.objects.get(id=kwargs["pk"])
-        payment = Payment.objects.get(borrowing_id=borrowing.id)
+        payment_type = request.query_params["payment_type"]
+        payment = Payment.objects.get(
+            borrowing_id=borrowing.id, payment_type=payment_type
+        )
         payment.status = "3"
         payment.save()
+        telegram_payment_notification(
+            payment=payment,
+            borrowing=borrowing,
+            payment_status="Canceled payment",
+            payment_type="Fine",
+        )
         return JsonResponse({"message": "Payment was canceled or failed."})
 
 
