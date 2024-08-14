@@ -3,6 +3,8 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import action
+
+from book.permissions import IsAdminOrReadOnly
 from borrowing.models import Borrowing
 from borrowing.serializers import (
     BorrowingCreateSerializer,
@@ -50,7 +52,7 @@ class BorrowingViewSet(viewsets.ModelViewSet):
         self.perform_create(serializer)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    @action(detail=True, methods=["post"], url_path="return")
+    @action(detail=True, methods=["post"], url_path="return", permission_classes=[IsAdminOrReadOnly])
     def return_book(self, request: Request, pk=None) -> Response:
         borrowing = self.get_object()
         serializer = BorrowingReturnSerializer(borrowing, data=request.data)
