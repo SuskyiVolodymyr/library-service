@@ -5,6 +5,7 @@ from django.http import JsonResponse
 from rest_framework import status
 
 from borrowing.models import Borrowing
+from borrowing.telegram_helper import send_message
 from payment.models import Payment
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
@@ -50,7 +51,7 @@ def payment_helper(
                     "price_data": {
                         "currency": "usd",
                         "product_data": {
-                            "name": (book for book in books),
+                            "name": ", ".join([book.title for book in books]),
                         },
                         "unit_amount": money_to_pay,
                     },
@@ -58,8 +59,8 @@ def payment_helper(
                 },
             ],
             mode="payment",
-            success_url=f"{domain}/api/payment/success/{borrowing.id}",
-            cancel_url=f"{domain}/api/payment/cancel/{borrowing.id}",
+            success_url=f"{domain}/api/payment/success/{borrowing.id}/?payment_type={payment_type}",
+            cancel_url=f"{domain}/api/payment/cancel/{borrowing.id}/?payment_type={payment_type}",
         )
         Payment.objects.create(
             status="1",
@@ -74,3 +75,17 @@ def payment_helper(
         )
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=400)
+
+
+def telegram_payment_notification(
+    payment: Payment, borrowing: Borrowing, payment_status: str, payment_type: str
+) -> None:
+    book_titles = ", ".join([book.title for book in borrowing.book.all()])
+    message = (
+        f"{payment_status}:\n"
+        f"User: {borrowing.user.email}\n"
+        f"Books: {book_titles}\n"
+        f"Payment type: {payment_type}\n"
+        f"Amount: {payment.money_to_pay}"
+    )
+    send_message(message)
