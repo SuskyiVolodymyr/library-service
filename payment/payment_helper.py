@@ -70,7 +70,7 @@ def payment_helper(
                 borrowing=borrowing,
                 session_url=checkout_session.url,
                 session_id=checkout_session.id,
-                money_to_pay=money_to_pay,
+                money_to_pay=round(money_to_pay / 100, 2),
             )
             return JsonResponse(
                 {"checkout_url": checkout_session.url}, status=status.HTTP_201_CREATED
@@ -88,6 +88,6 @@ def telegram_payment_notification(
         f"User: {borrowing.user.email}\n"
         f"Books: {book_titles}\n"
         f"Payment type: {payment_type}\n"
-        f"Amount: {payment.money_to_pay / 100:.2f}$"
+        f"Amount: {payment.money_to_pay}$"
     )
     send_message(message)
