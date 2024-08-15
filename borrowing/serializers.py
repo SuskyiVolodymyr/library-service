@@ -48,17 +48,19 @@ class BorrowingCreateSerializer(serializers.ModelSerializer):
                 book.inventory -= 1
                 book.save()
 
-                borrowing = Borrowing.objects.create(
-                    user=self.context["request"].user, **validated_data
-                )
+            borrowing = Borrowing.objects.create(
+                user=self.context["request"].user, **validated_data
+            )
             borrowing.book.add(*books)
 
             book_titles = ", ".join([book.title for book in books])
-            message = f"New borrowing created:\n" \
-                      f"User: {borrowing.user.email}\n" \
-                      f"Book: {book_titles}\n" \
-                      f"Borrow Date: {borrowing.borrow_date}\n" \
-                      f"Expected return date: {borrowing.expected_return_date}"
+            message = (
+                f"New borrowing created:\n"
+                f"User: {borrowing.user.email}\n"
+                f"Book: {book_titles}\n"
+                f"Borrow Date: {borrowing.borrow_date}\n"
+                f"Expected return date: {borrowing.expected_return_date}"
+            )
             send_message(message)
 
             return borrowing
