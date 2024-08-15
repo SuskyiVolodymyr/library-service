@@ -172,10 +172,3 @@ CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
 CELERY_TIMEZONE = "UTC"
-
-CELERY_BEAT_SCHEDULE = {
-    "check_overdue_borrowings": {
-        "task": "borrowing.tasks.check_overdue_borrowings",
-        "schedule": timedelta(days=1),
-    },
-}
