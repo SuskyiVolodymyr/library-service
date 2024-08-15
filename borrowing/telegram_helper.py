@@ -11,7 +11,7 @@ bot = telebot.TeleBot(BOT_TOKEN)
 
 def send_message(text):
     """
-    Send a message to the bot.
+    Send a message to the Telegram chat.
     """
     try:
         bot.send_message(CHAT_ID, text)
