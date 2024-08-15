@@ -26,3 +26,4 @@ services:
 volumes:
   my_db:
   my_media:
+  
