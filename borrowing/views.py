@@ -59,7 +59,7 @@ class BorrowingViewSet(viewsets.ModelViewSet):
         detail=True,
         methods=["get"],
         url_path="return",
-        permission_classes=[IsAdminOrReadOnly],
+        permission_classes=[IsAuthenticated],
     )
     def return_book(self, request: Request, pk=None) -> Response | JsonResponse:
         borrowing = self.get_object()
