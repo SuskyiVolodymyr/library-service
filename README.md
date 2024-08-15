@@ -21,13 +21,13 @@ docker-compose up --build
 
 4. **Create a superuser:**
 ```bash
-docker-compose exec web python manage.py createsuperuser
+docker exec -it library python manage.py createsuperuser
 ```
 5. **Access the application:**
 * Admin interface: Go to http://127.0.0.1:8000/admin/ and log in with the superuser credentials.
 * API endpoints: Access the API at http://127.0.0.1:8000/api/.
-
-6. **Shut down the Docker containers:**
+6. **If you want to use schedule task, you must go to admin panel and add new periodic task**
+7. **Shut down the Docker containers:**
 ```bash
 docker-compose down
 ```
@@ -77,8 +77,9 @@ celery -A library_service beat -l INFO --scheduler django_celery_beat.schedulers
 ```bash
 python manage.py runserver
 ```
-11. **Access the admin interface, create scheduler in admin:**
+11. **Access the admin interface:**
 * Go to http://127.0.0.1:8000/admin/ and log in with the superuser credentials.
+12. **If you want to use schedule task, you must go to admin panel and add new periodic task**
 
 ### Running Tests
 * To run tests, execute:
