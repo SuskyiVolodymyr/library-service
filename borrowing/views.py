@@ -1,4 +1,8 @@
+import datetime
+
+from django.http import JsonResponse
 from rest_framework import viewsets, status
+from rest_framework.exceptions import ValidationError
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -8,9 +12,9 @@ from book.permissions import IsAdminOrReadOnly
 from borrowing.models import Borrowing
 from borrowing.serializers import (
     BorrowingCreateSerializer,
-    BorrowingReturnSerializer,
-    BorrowingSerializer
+    BorrowingSerializer,
 )
+from payment.payment_helper import payment_create_borrowing, fine_payment
 
 
 class BorrowingViewSet(viewsets.ModelViewSet):
@@ -20,8 +24,6 @@ class BorrowingViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.action in ["list", "retrieve"]:
             return BorrowingSerializer
-        if self.action == "return_book":
-            return BorrowingReturnSerializer
         return BorrowingCreateSerializer
 
     def get_queryset(self):
@@ -43,20 +45,34 @@ class BorrowingViewSet(viewsets.ModelViewSet):
 
         return queryset
 
-    def create(self, request: Request, *args, **kwargs) -> Response:
+    def create(self, request: Request, *args, **kwargs) -> JsonResponse:
         serializer = BorrowingCreateSerializer(
-            data=request.data,
-            context={"request": request}
+            data=request.data, context={"request": request}
         )
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return payment_create_borrowing(
+            borrowing_id=serializer["id"],
+        )
 
-    @action(detail=True, methods=["post"], url_path="return", permission_classes=[IsAdminOrReadOnly])
-    def return_book(self, request: Request, pk=None) -> Response:
+    @action(
+        detail=True,
+        methods=["get"],
+        url_path="return",
+        permission_classes=[IsAuthenticated],
+    )
+    def return_book(self, request: Request, pk=None) -> Response | JsonResponse:
         borrowing = self.get_object()
-        serializer = BorrowingReturnSerializer(borrowing, data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
+        if borrowing.actual_return_date:
+            raise ValidationError("You already returned book")
+        borrowing.actual_return_date = datetime.date.today()
+        borrowing.save()
+        for book in borrowing.book.all():
+            book.inventory += 1
+            book.save()
+        if borrowing.expected_return_date < borrowing.actual_return_date:
+            return fine_payment(borrowing=borrowing)
+
+        serializer = BorrowingSerializer(borrowing)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
