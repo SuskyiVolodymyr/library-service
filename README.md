@@ -15,7 +15,7 @@ cd library-service
 ```
 2. **Build the Docker image and containers:**
 ```bash
-docker-compose up --build
+docker compose up --build
 ```
 3. **Copy the sample environment file and populate it with the required data**
 
@@ -28,12 +28,12 @@ docker compose exec -it library python manage.py createsuperuser
 * API endpoints: Access the API at http://127.0.0.1:8000/api/.
 6. **Shut down the Docker containers:**
 ```bash
-docker-compose down
+docker compose down
 ```
 ### Running Tests
 * To run tests, execute:
 ```bash
-docker-compose exec web python manage.py test
+docker compose exec -t library python manage.py test
 ```
 
 ## How to Run the Project with Virtual Environment
