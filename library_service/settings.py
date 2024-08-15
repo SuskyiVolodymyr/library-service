@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     "book",
     "borrowing",
     "payment",
+    "django_celery_beat"
 ]
 
 MIDDLEWARE = [
@@ -166,6 +167,14 @@ SIMPLE_JWT = {
 
 STRIPE_SECRET_KEY = os.getenv("STRIPE_API_KEY")
 
+
+CELERY_BROKER_URL = os.environ["CELERY_BROKER_URL"]
+CELERY_RESULT_BACKEND = os.environ["CELERY_RESULT_BACKEND"]
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
+CELERY_TIMEZONE = "UTC"
+
 SPECTACULAR_SETTINGS = {
     "TITLE": "Library Service",
     "DESCRIPTION": "Library Service API",
@@ -178,3 +187,4 @@ SPECTACULAR_SETTINGS = {
         "defaultModelExpandDepth": 2,
     },
 }
+
