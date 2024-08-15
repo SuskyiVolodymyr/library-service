@@ -4,6 +4,6 @@ from borrowing.views import BorrowingViewSet
 app_name = "borrowings"
 
 router = DefaultRouter()
-router.register("", BorrowingViewSet)
+router.register("", BorrowingViewSet, basename="borrowing")
 
 urlpatterns = router.urls
