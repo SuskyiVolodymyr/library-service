@@ -129,7 +129,7 @@ class BorrowingAdminTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 1)
 
-    def test_staff_user_can_filter_by_user_id(self):
+    def test_admin_user_can_filter_by_user_id(self):
         another_user = User.objects.create_user(
             email="another_user@example.com",
             password="password123",
@@ -146,7 +146,7 @@ class BorrowingAdminTests(APITestCase):
         self.assertEqual(len(response.data), 1)
         self.assertEqual(response.data[0]["id"], another_borrowing.id)
 
-    def test_user_can_filter_by_is_active(self):
+    def test_admin_user_can_filter_by_is_active(self):
         response = self.client.get(self.borrowing_url, {"is_active": "true"})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 1)
