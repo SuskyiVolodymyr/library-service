@@ -26,8 +26,7 @@ docker compose exec -it library python manage.py createsuperuser
 5. **Access the application:**
 * Admin interface: Go to http://127.0.0.1:8000/admin/ and log in with the superuser credentials.
 * API endpoints: Access the API at http://127.0.0.1:8000/api/.
-6. **If you want to use schedule task, you must go to admin panel and add new periodic task**
-7. **Shut down the Docker containers:**
+6. **Shut down the Docker containers:**
 ```bash
 docker-compose down
 ```
@@ -79,7 +78,7 @@ python manage.py runserver
 ```
 11. **Access the admin interface:**
 * Go to http://127.0.0.1:8000/admin/ and log in with the superuser credentials.
-12. **If you want to use schedule task, you must go to admin panel and add new periodic task**
+
 
 ### Running Tests
 * To run tests, execute:
