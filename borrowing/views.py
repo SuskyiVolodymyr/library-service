@@ -19,15 +19,28 @@ from payment.payment_helper import payment_create_borrowing, fine_payment
 
 
 class BorrowingViewSet(viewsets.ModelViewSet):
+    """
+    A viewset for viewing and editing borrowing instances.
+    - List and retrieve actions use the `BorrowingSerializer`.
+    - Create action uses the `BorrowingCreateSerializer`.
+    - The queryset is filtered based on the authenticated user.
+    """
+
     queryset = Borrowing.objects.select_related("user").prefetch_related("book")
     permission_classes = [IsAuthenticated]
 
     def get_serializer_class(self):
+        """
+        Return the appropriate serializer class depending on the action.
+        """
         if self.action in ["list", "retrieve"]:
             return BorrowingSerializer
         return BorrowingCreateSerializer
 
     def get_queryset(self):
+        """
+        Return a filtered queryset depending on the user's permissions and query parameters.
+        """
         queryset = super().get_queryset()
         user = self.request.user
 
@@ -47,6 +60,9 @@ class BorrowingViewSet(viewsets.ModelViewSet):
         return queryset
 
     def create(self, request: Request, *args, **kwargs) -> JsonResponse:
+        """
+        Create a new borrowing instance and initiate the payment process.
+        """
         serializer = BorrowingCreateSerializer(
             data=request.data, context={"request": request}
         )
@@ -63,6 +79,9 @@ class BorrowingViewSet(viewsets.ModelViewSet):
         permission_classes=[IsAdminOrReadOnly],
     )
     def return_book(self, request: Request, pk=None) -> Response | JsonResponse:
+        """
+        Return a borrowed book. If the book is returned late, a fine payment is processed.
+        """
         borrowing = self.get_object()
         if borrowing.actual_return_date:
             raise ValidationError("You already returned book")
