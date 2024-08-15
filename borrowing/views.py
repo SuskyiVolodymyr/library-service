@@ -1,6 +1,7 @@
 import datetime
 
 from django.http import JsonResponse
+from drf_spectacular.utils import OpenApiParameter, extend_schema
 from rest_framework import viewsets, status
 from rest_framework.exceptions import ValidationError
 from rest_framework.request import Request
@@ -95,3 +96,22 @@ class BorrowingViewSet(viewsets.ModelViewSet):
         serializer = BorrowingSerializer(borrowing)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="user_id",
+                description="Filter borrowings by user ID.",
+                required=False,
+                type=int,
+            ),
+            OpenApiParameter(
+                name="is_active",
+                description="Filter borrowings by whether they are active or not.",
+                required=False,
+                type=str,
+            ),
+        ]
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
