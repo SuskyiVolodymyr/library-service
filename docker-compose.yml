@@ -23,6 +23,47 @@ services:
     volumes:
       - my_db:$PGDATA
 
+  redis:
+    image: "redis:alpine"
+
+  celery:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: "celery -A library_service worker -l info"
+    depends_on:
+      - library
+      - redis
+      - db
+    restart: on-failure
+    env_file:
+      - .env
+
+  celery-beat:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: "celery -A library_service beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler"
+    depends_on:
+      - library
+      - redis
+      - db
+    restart: on-failure
+    env_file:
+      - .env
+
+  flower:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5555:5555"
+    command: "celery -A library_service flower --address=0.0.0.0"
+    depends_on:
+      - celery
+    env_file:
+      - .env
+
 volumes:
   my_db:
   my_media:

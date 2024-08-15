@@ -18,12 +18,6 @@ def check_overdue_borrowings():
             )
             message = (f"Overdue borrowing: {books_title} by {borrowing.user.email}\n"
                        f"Status: {status}")
-            try:
-                send_message(message)
-            except Exception as e:
-                pass
+            send_message(message)
     else:
-        try:
             send_message("No active borrowings today!")
-        except Exception as e:
-            pass
