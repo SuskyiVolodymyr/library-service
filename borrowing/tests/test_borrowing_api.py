@@ -156,24 +156,6 @@ class BorrowingAdminTests(APITestCase):
 class BorrowingUnauthorizedTests(APITestCase):
     def setUp(self):
         self.client = APIClient()
-        self.user = User.objects.create_user(
-            email="user@example.com",
-            password="password123",
-            first_name="User",
-            last_name="Example",
-            is_staff=False,
-        )
-        self.book = Book.objects.create(
-            title="Test Book",
-            author="Author",
-            cover="Soft",
-            inventory=5,
-            daily_fee=1.50,
-        )
-        self.borrowing = Borrowing.objects.create(
-            expected_return_date="2024-08-30", user=self.user
-        )
-        self.borrowing.book.set([self.book])
         self.borrowing_url = reverse("borrowings:borrowing-list")
 
     def test_unauthenticated_access(self):
