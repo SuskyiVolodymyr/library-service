@@ -21,7 +21,7 @@ docker-compose up --build
 
 4. **Create a superuser:**
 ```bash
-docker exec -it library python manage.py createsuperuser
+docker compose exec -it library python manage.py createsuperuser
 ```
 5. **Access the application:**
 * Admin interface: Go to http://127.0.0.1:8000/admin/ and log in with the superuser credentials.
@@ -151,9 +151,8 @@ Managing users' borrowings of books
 - Interacts with Telegram API, Telegram Chats & Bots
 
 ### Payments Service (Stripe)
-Perform payments for book borrowings through the platform
-- **GET:** `/success/` - Check successful Stripe payment
-- **GET:** `/cancel/` - Return payment paused message
+- **GET:** `/payment/` - Main payment processing endpoint.
+- **GET:** `/payment/<id>` - Get detail information of payment.
 
 ## Features
 - [X] Implement custom user model
@@ -174,7 +173,7 @@ Perform payments for book borrowings through the platform
 
 
 ## Documentation
-* API documentation is available at http://127.0.0.1:8000/swagger/.
+* API documentation is available at http://127.0.0.1:8000/api/doc/swagger/.
 
 ## Group members:
 #### Mentor:
