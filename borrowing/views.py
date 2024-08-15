@@ -1,7 +1,6 @@
 import datetime
 
 from django.http import JsonResponse
-from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework import viewsets, status
 from rest_framework.exceptions import ValidationError
 from rest_framework.request import Request
