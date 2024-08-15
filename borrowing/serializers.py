@@ -8,7 +8,10 @@ from borrowing.telegram_helper import send_message
 
 
 class BorrowingSerializer(serializers.ModelSerializer):
-    """Borrowing serializer with book and user fields read only"""
+    """
+    Serializer for Borrowing model.
+    Includes book and user fields as read-only.
+    """
 
     book = BookReadSerializer(read_only=True, many=True)
     user = serializers.SlugRelatedField(many=False, read_only=True, slug_field="email")
@@ -27,11 +30,19 @@ class BorrowingSerializer(serializers.ModelSerializer):
 
 
 class BorrowingCreateSerializer(serializers.ModelSerializer):
+    """
+    Serializer for creating a new Borrowing instance.
+    Validates that the expected return date is not earlier than the borrowing date.
+    """
+
     class Meta:
         model = Borrowing
         fields = ["id", "expected_return_date", "book"]
 
     def validate(self, attrs):
+        """
+        Validate the expected return date.
+        """
         borrow_date = timezone.now().date()
         expected_return_date = attrs.get("expected_return_date")
 
@@ -42,6 +53,10 @@ class BorrowingCreateSerializer(serializers.ModelSerializer):
         return attrs
 
     def create(self, validated_data):
+        """
+        Create a new borrowing instance and decrease the inventory of the borrowed books.
+        Send a notification message via Telegram.
+        """
         with transaction.atomic():
             books = validated_data.pop("book")
             for book in books:
