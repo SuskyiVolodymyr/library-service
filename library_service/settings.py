@@ -14,6 +14,7 @@ import os
 from datetime import timedelta
 from pathlib import Path
 
+from celery.schedules import crontab
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -54,7 +55,7 @@ INSTALLED_APPS = [
     "book",
     "borrowing",
     "payment",
-    "django_celery_beat"
+    "django_celery_beat",
 ]
 
 MIDDLEWARE = [
@@ -188,3 +189,9 @@ SPECTACULAR_SETTINGS = {
     },
 }
 
+CELERY_BEAT_SCHEDULE = {
+    "Task_one_schedule": {
+        "task": "borrowing.tasks.check_overdue_borrowings",
+        "schedule": crontab(minute=0, hour=0),
+    }
+}
