@@ -1,5 +1,4 @@
 from django.db import transaction
-from drf_spectacular.utils import extend_schema_serializer, OpenApiExample
 from rest_framework import serializers
 
 from book.models import Book
