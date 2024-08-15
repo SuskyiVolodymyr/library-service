@@ -1,4 +1,5 @@
 from django.http import JsonResponse
+from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework import mixins
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
@@ -70,3 +71,16 @@ class PaymentViewSet(GenericViewSet, mixins.ListModelMixin, mixins.RetrieveModel
         if not self.request.user.is_staff:
             return queryset.filter(borrowing__user_id=self.request.user.id)
         return queryset
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="status",
+                description="Filter payments by status (canceled/paid/pending).",
+                required=False,
+                type=str,
+            )
+        ]
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
