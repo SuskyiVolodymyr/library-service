@@ -1,4 +1,5 @@
 from django.http import JsonResponse
+from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework import mixins
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
@@ -13,6 +14,9 @@ from payment.serializers import PaymentSerializer, PaymentListSerializer
 
 class PaymentSuccessView(APIView):
     def get(self, request, *args, **kwargs):
+        """
+        View to handle successful payments.
+        """
         borrowing = Borrowing.objects.get(id=kwargs["pk"])
         payment_type = request.query_params["payment_type"]
         payment = Payment.objects.get(
@@ -30,6 +34,10 @@ class PaymentSuccessView(APIView):
 
 
 class PaymentCancelView(APIView):
+    """
+    View to handle canceled or failed payments.
+    """
+
     def get(self, request: Request, *args, **kwargs):
         borrowing = Borrowing.objects.get(id=kwargs["pk"])
         payment_type = request.query_params["payment_type"]
@@ -48,15 +56,25 @@ class PaymentCancelView(APIView):
 
 
 class PaymentViewSet(GenericViewSet, mixins.ListModelMixin, mixins.RetrieveModelMixin):
+    """
+    ViewSet for handling payments.
+    """
+
     queryset = Payment.objects.select_related("borrowing")
     permission_classes = [IsAuthenticated]
 
     def get_serializer_class(self):
+        """
+        Return the appropriate serializer class based on the action.
+        """
         if self.action == "list":
             return PaymentListSerializer
         return PaymentSerializer
 
     def get_queryset(self):
+        """
+        Return the filtered queryset based on query parameters and user permissions.
+        """
         queryset = self.queryset.select_related("borrowing__user").prefetch_related(
             "borrowing__book"
         )
@@ -70,3 +88,19 @@ class PaymentViewSet(GenericViewSet, mixins.ListModelMixin, mixins.RetrieveModel
         if not self.request.user.is_staff:
             return queryset.filter(borrowing__user_id=self.request.user.id)
         return queryset
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="status",
+                description="Filter payments by status (canceled/paid/pending).",
+                required=False,
+                type=str,
+            )
+        ]
+    )
+    def list(self, request, *args, **kwargs):
+        """
+        List payments with optional filtering by status.
+        """
+        return super().list(request, *args, **kwargs)

@@ -15,6 +15,9 @@ FINE_MULTIPLIER = 2
 
 
 def payment_create_borrowing(borrowing_id) -> JsonResponse:
+    """
+    Create a payment session for a new borrowing.
+    """
     borrowing = Borrowing.objects.get(id=borrowing_id.value)
     books = borrowing.book.all()
     borrowing_days = borrowing.expected_return_date - borrowing.borrow_date
@@ -27,6 +30,9 @@ def payment_create_borrowing(borrowing_id) -> JsonResponse:
 
 
 def fine_payment(borrowing: Borrowing) -> JsonResponse:
+    """
+    Create a payment session for a late fee.
+    """
     books = borrowing.book.all()
     overdue_days = borrowing.actual_return_date - borrowing.expected_return_date
     money_to_pay = (
@@ -43,6 +49,9 @@ def fine_payment(borrowing: Borrowing) -> JsonResponse:
 def payment_helper(
     borrowing: Borrowing, money_to_pay: int, books: QuerySet, payment_type: str
 ) -> JsonResponse:
+    """
+    Helper function to create a Stripe checkout session and save payment details.
+    """
     domain = "http://127.0.0.1:8000"
     with transaction.atomic():
         try:
@@ -82,6 +91,9 @@ def payment_helper(
 def telegram_payment_notification(
     payment: Payment, borrowing: Borrowing, payment_status: str, payment_type: str
 ) -> None:
+    """
+    Send Telegram message with payment details.
+    """
     book_titles = ", ".join([book.title for book in borrowing.book.all()])
     message = (
         f"{payment_status}:\n"
