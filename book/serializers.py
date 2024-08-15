@@ -10,7 +10,7 @@ class BookSerializer(serializers.ModelSerializer):
         fields = ["id", "title", "author", "cover", "inventory", "daily_fee"]
 
     def create(self, validated_data):
-        """Create and return a new book."""
+        """Create a book, if one does not exist yet, or combine"""
         book = Book.objects.filter(
             title=validated_data["title"],
             author=validated_data["author"],

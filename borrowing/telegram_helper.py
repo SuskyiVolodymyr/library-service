@@ -11,9 +11,7 @@ bot = telebot.TeleBot(BOT_TOKEN)
 
 def send_message(text):
     """
-    Send a message to the Telegram chat specified by CHAT_ID.
-    Args: text (str): The message text to be sent.
-    Returns: dict: A dictionary with the result of the message sending.
+    Send a message to the Telegram cha`t will be enough.
     """
     try:
         bot.send_message(CHAT_ID, text)

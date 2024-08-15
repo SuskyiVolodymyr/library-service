@@ -6,9 +6,11 @@ from book.serializers import BookSerializer
 
 
 class BookViewSet(viewsets.ModelViewSet):
-    """List all books. If the user is an admin, all books are listed.
-    If the user is staff, all books are listed.
-    If the user is not admin or staff, only books belonging to the user are listed.
+    """
+    A viewset for viewing and editing book instances.
+    - List and retrieve actions use the `BookSerializer`.
+    - Create action uses the `BookSerializer`.
+    - The queryset is filtered based on the authenticated user.
     """
 
     queryset = Book.objects.all()
