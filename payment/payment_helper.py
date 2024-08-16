@@ -36,7 +36,12 @@ def payment_create_borrowing(borrowing_id) -> JsonResponse:
 
 def fine_payment(borrowing: Borrowing) -> JsonResponse:
     """
-    Create a payment session for a late fee.
+    Initiates a payment process for a late fee.
+
+    Calculates the fine for overdue books based on the number of overdue days
+    and the daily fees of the books, applying a multiplier for the fine.
+    Creates a Stripe checkout session where the user can complete the fine payment.
+    Returns a JSON response with the session URL and ID.
     """
     books = borrowing.book.all()
     overdue_days = borrowing.actual_return_date - borrowing.expected_return_date
