@@ -4,7 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 from user.serializers import UserSerializer
 
 
-class CreateOrUpdateUserView(generics.CreateAPIView):
+class CreateUserView(generics.CreateAPIView):
     serializer_class = UserSerializer
 
 

@@ -16,7 +16,12 @@ FINE_MULTIPLIER = 2
 
 def payment_create_borrowing(borrowing_id) -> JsonResponse:
     """
-    Create a payment session for a new borrowing.
+    Initiates a payment process for a borrowing transaction.
+
+    Calculates the total amount to be paid based on the borrowing duration and
+    the daily fees of all borrowed books. Creates a Stripe checkout session
+    where the user can complete the payment.
+    Returns a JSON response with the session URL and ID.
     """
     borrowing = Borrowing.objects.get(id=borrowing_id.value)
     books = borrowing.book.all()
@@ -31,7 +36,12 @@ def payment_create_borrowing(borrowing_id) -> JsonResponse:
 
 def fine_payment(borrowing: Borrowing) -> JsonResponse:
     """
-    Create a payment session for a late fee.
+    Initiates a payment process for a late fee.
+
+    Calculates the fine for overdue books based on the number of overdue days
+    and the daily fees of the books, applying a multiplier for the fine.
+    Creates a Stripe checkout session where the user can complete the fine payment.
+    Returns a JSON response with the session URL and ID.
     """
     books = borrowing.book.all()
     overdue_days = borrowing.actual_return_date - borrowing.expected_return_date
@@ -50,7 +60,12 @@ def payment_helper(
     borrowing: Borrowing, money_to_pay: int, books: QuerySet, payment_type: str
 ) -> JsonResponse:
     """
-    Helper function to create a Stripe checkout session and save payment details.
+    Creates a Stripe checkout session and records payment details.
+
+    Handles the interaction with Stripe to create a checkout session based on
+    the borrowing details. Records the payment session information in the database
+    for future reference and provides the checkout URL to the user.
+    Returns a JSON response with the session URL and ID.
     """
     domain = "http://127.0.0.1:8000"
     with transaction.atomic():
@@ -92,7 +107,11 @@ def telegram_payment_notification(
     payment: Payment, borrowing: Borrowing, payment_status: str, payment_type: str
 ) -> None:
     """
-    Send Telegram message with payment details.
+    Sends a notification about the payment status via Telegram.
+
+    Formats and sends a message to a predefined Telegram chat, providing detailed
+    information about the payment status, the user who made the payment, the
+    books involved, and the payment amount.
     """
     book_titles = ", ".join([book.title for book in borrowing.book.all()])
     message = (
