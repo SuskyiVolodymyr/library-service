@@ -15,7 +15,10 @@ from payment.serializers import PaymentSerializer, PaymentListSerializer
 class PaymentSuccessView(APIView):
     def get(self, request, *args, **kwargs):
         """
-        View to handle successful payments.
+        Handles successful payments.
+        Retrieves the payment using the borrowing ID ("borrowing") and payment type ("payment_type") from the request.
+        Updates the payment status to successful and sends a notification via Telegram.
+        Returns a JSON response indicating success.
         """
         borrowing = Borrowing.objects.get(id=kwargs["pk"])
         payment_type = request.query_params["payment_type"]
