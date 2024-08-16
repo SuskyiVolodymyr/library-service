@@ -63,7 +63,9 @@ class PaymentCancelView(APIView):
 
 class PaymentViewSet(GenericViewSet, mixins.ListModelMixin, mixins.RetrieveModelMixin):
     """
-    ViewSet for handling payments.
+    ViewSet for managing payments.
+
+    Allows retrieving a list of payments and individual payments. Supports filtering by payment status.
     """
 
     queryset = Payment.objects.select_related("borrowing")
@@ -79,7 +81,9 @@ class PaymentViewSet(GenericViewSet, mixins.ListModelMixin, mixins.RetrieveModel
 
     def get_queryset(self):
         """
-        Return the filtered queryset based on query parameters and user permissions.
+        Returns the filtered queryset based on query parameters and user permissions.
+        Filters payments by status (canceled/paid/pending) and user.
+        Returns the filtered queryset.
         """
         queryset = self.queryset.select_related("borrowing__user").prefetch_related(
             "borrowing__book"
