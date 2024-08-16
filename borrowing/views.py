@@ -1,6 +1,7 @@
 import datetime
 
 from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
 from drf_spectacular.utils import OpenApiParameter, extend_schema
 from rest_framework import viewsets, status
 from rest_framework.exceptions import ValidationError
@@ -9,7 +10,6 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import action
 
-from book.permissions import IsAdminOrReadOnly
 from borrowing.models import Borrowing
 from borrowing.serializers import (
     BorrowingCreateSerializer,
@@ -82,7 +82,7 @@ class BorrowingViewSet(viewsets.ModelViewSet):
         """
         Return a borrowed book. If the book is returned late, a fine payment is processed.
         """
-        borrowing = self.get_object()
+        borrowing = get_object_or_404(Borrowing, pk=pk)
         if borrowing.actual_return_date:
             raise ValidationError("You already returned book")
         borrowing.actual_return_date = datetime.date.today()
