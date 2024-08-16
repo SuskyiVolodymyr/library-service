@@ -3,6 +3,7 @@ from django.test import TestCase
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient
+
 from book.models import Book
 
 
@@ -25,7 +26,7 @@ class AdminBookTests(TestCase):
             email="admin@test.com",
             password="password123",
             first_name="Admin",
-            last_name="User"
+            last_name="User",
         )
         self.client.force_authenticate(self.admin_user)
 
@@ -49,9 +50,7 @@ class AdminBookTests(TestCase):
 
     def test_update_existing_book_merges_inventory(self):
         book1 = sample_book(title="Sample Book", author="Author Name", cover="HARD")
-        book2 = sample_book(
-            title="Another Book", author="Another Author", cover="SOFT"
-        )
+        book2 = sample_book(title="Another Book", author="Another Author", cover="SOFT")
 
         payload = {
             "title": "Sample Book",
@@ -71,9 +70,7 @@ class AdminBookTests(TestCase):
 
     def test_partial_update_existing_book_merges_inventory(self):
         book1 = sample_book(title="Sample Book", author="Author Name", cover="HARD")
-        book2 = sample_book(
-            title="Another Book", author="Another Author", cover="SOFT"
-        )
+        book2 = sample_book(title="Another Book", author="Another Author", cover="SOFT")
 
         payload = {
             "title": "Sample Book",
@@ -123,7 +120,7 @@ class UserBookTests(TestCase):
             email="user@test.com",
             password="password123",
             first_name="Common",
-            last_name="User"
+            last_name="User",
         )
         self.client.force_authenticate(self.common_user)
 

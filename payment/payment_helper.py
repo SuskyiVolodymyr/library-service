@@ -9,6 +9,7 @@ from borrowing.models import Borrowing
 from borrowing.telegram_helper import send_message
 from payment.models import Payment
 
+
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
 FINE_MULTIPLIER = 2
