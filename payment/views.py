@@ -37,11 +37,14 @@ class PaymentSuccessView(APIView):
 
 
 class PaymentCancelView(APIView):
-    """
-    View to handle canceled or failed payments.
-    """
-
     def get(self, request: Request, *args, **kwargs):
+        """
+        Handles canceled or failed payments.
+
+        Retrieves the payment using the borrowing ID ("borrowing") and payment type ("payment_type") from the request.
+        Updates the payment status to canceled/failed and sends a notification via Telegram.
+        Returns a JSON response indicating success.
+        """
         borrowing = Borrowing.objects.get(id=kwargs["pk"])
         payment_type = request.query_params["payment_type"]
         payment = Payment.objects.get(
