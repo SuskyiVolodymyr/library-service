@@ -60,7 +60,12 @@ def payment_helper(
     borrowing: Borrowing, money_to_pay: int, books: QuerySet, payment_type: str
 ) -> JsonResponse:
     """
-    Helper function to create a Stripe checkout session and save payment details.
+    Creates a Stripe checkout session and records payment details.
+
+    Handles the interaction with Stripe to create a checkout session based on
+    the borrowing details. Records the payment session information in the database
+    for future reference and provides the checkout URL to the user.
+    Returns a JSON response with the session URL and ID.
     """
     domain = "http://127.0.0.1:8000"
     with transaction.atomic():
@@ -102,7 +107,11 @@ def telegram_payment_notification(
     payment: Payment, borrowing: Borrowing, payment_status: str, payment_type: str
 ) -> None:
     """
-    Send Telegram message with payment details.
+    Sends a notification about the payment status via Telegram.
+
+    Formats and sends a message to a predefined Telegram chat, providing detailed
+    information about the payment status, the user who made the payment, the
+    books involved, and the payment amount.
     """
     book_titles = ", ".join([book.title for book in borrowing.book.all()])
     message = (
