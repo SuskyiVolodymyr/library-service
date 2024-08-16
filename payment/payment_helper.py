@@ -16,7 +16,12 @@ FINE_MULTIPLIER = 2
 
 def payment_create_borrowing(borrowing_id) -> JsonResponse:
     """
-    Create a payment session for a new borrowing.
+    Initiates a payment process for a borrowing transaction.
+
+    Calculates the total amount to be paid based on the borrowing duration and
+    the daily fees of all borrowed books. Creates a Stripe checkout session
+    where the user can complete the payment.
+    Returns a JSON response with the session URL and ID.
     """
     borrowing = Borrowing.objects.get(id=borrowing_id.value)
     books = borrowing.book.all()
