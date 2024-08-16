@@ -1,7 +1,7 @@
 from celery import shared_task
-from borrowing.models import Borrowing
 from datetime import date
 
+from borrowing.models import Borrowing
 from borrowing.telegram_helper import send_message
 
 

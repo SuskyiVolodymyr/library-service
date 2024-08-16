@@ -2,11 +2,14 @@ from datetime import date, timedelta
 from unittest.mock import patch
 
 from django.urls import reverse
+from django.contrib.auth import get_user_model
+
 from rest_framework import status
 from rest_framework.test import APITestCase, APIClient
-from django.contrib.auth import get_user_model
+
 from book.models import Book
 from borrowing.models import Borrowing
+
 
 User = get_user_model()
 
