@@ -63,7 +63,7 @@ class BorrowingViewSet(viewsets.ModelViewSet):
         """
         Create a new borrowing instance and initiate the payment process.
         """
-        serializer = BorrowingCreateSerializer(
+        serializer = self.serializer_class(
             data=request.data, context={"request": request}
         )
         serializer.is_valid(raise_exception=True)
