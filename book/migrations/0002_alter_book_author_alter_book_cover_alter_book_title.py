@@ -4,26 +4,26 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-	dependencies = [
-		("book", "0001_initial"),
-	]
+    dependencies = [
+        ("book", "0001_initial"),
+    ]
 
-	operations = [
-		migrations.AlterField(
-			model_name="book",
-			name="author",
-			field=models.CharField(max_length=255),
-		),
-		migrations.AlterField(
-			model_name="book",
-			name="cover",
-			field=models.CharField(
-				choices=[("HARD", "Hard"), ("SOFT", "Soft")], max_length=5
-			),
-		),
-		migrations.AlterField(
-			model_name="book",
-			name="title",
-			field=models.CharField(max_length=255),
-		),
-	]
+    operations = [
+        migrations.AlterField(
+            model_name="book",
+            name="author",
+            field=models.CharField(max_length=255),
+        ),
+        migrations.AlterField(
+            model_name="book",
+            name="cover",
+            field=models.CharField(
+                choices=[("HARD", "Hard"), ("SOFT", "Soft")], max_length=5
+            ),
+        ),
+        migrations.AlterField(
+            model_name="book",
+            name="title",
+            field=models.CharField(max_length=255),
+        ),
+    ]

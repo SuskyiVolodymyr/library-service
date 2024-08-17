@@ -36,57 +36,57 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 INTERNAL_IPS = [
-	"127.0.0.1",
+    "127.0.0.1",
 ]
 
 
 # Application definition
 
 INSTALLED_APPS = [
-	"django.contrib.admin",
-	"django.contrib.auth",
-	"django.contrib.contenttypes",
-	"django.contrib.sessions",
-	"django.contrib.messages",
-	"django.contrib.staticfiles",
-	"drf_spectacular",
-	"rest_framework",
-	"debug_toolbar",
-	"django_filters",
-	"django_celery_beat",
-	"user",
-	"book",
-	"borrowing",
-	"payment",
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    "drf_spectacular",
+    "rest_framework",
+    "debug_toolbar",
+    "django_filters",
+    "django_celery_beat",
+    "user",
+    "book",
+    "borrowing",
+    "payment",
 ]
 
 MIDDLEWARE = [
-	"django.middleware.security.SecurityMiddleware",
-	"debug_toolbar.middleware.DebugToolbarMiddleware",
-	"django.contrib.sessions.middleware.SessionMiddleware",
-	"django.middleware.common.CommonMiddleware",
-	"django.middleware.csrf.CsrfViewMiddleware",
-	"django.contrib.auth.middleware.AuthenticationMiddleware",
-	"django.contrib.messages.middleware.MessageMiddleware",
-	"django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "django.middleware.security.SecurityMiddleware",
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
 ROOT_URLCONF = "library_service.urls"
 
 TEMPLATES = [
-	{
-		"BACKEND": "django.template.backends.django.DjangoTemplates",
-		"DIRS": [],
-		"APP_DIRS": True,
-		"OPTIONS": {
-			"context_processors": [
-				"django.template.context_processors.debug",
-				"django.template.context_processors.request",
-				"django.contrib.auth.context_processors.auth",
-				"django.contrib.messages.context_processors.messages",
-			],
-		},
-	},
+    {
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
+            ],
+        },
+    },
 ]
 
 WSGI_APPLICATION = "library_service.wsgi.application"
@@ -96,14 +96,14 @@ WSGI_APPLICATION = "library_service.wsgi.application"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
-	"default": {
-		"ENGINE": "django.db.backends.postgresql",
-		"NAME": os.environ["POSTGRES_DB"],
-		"USER": os.environ["POSTGRES_USER"],
-		"PASSWORD": os.environ["POSTGRES_PASSWORD"],
-		"HOST": os.environ["POSTGRES_HOST"],
-		"PORT": os.environ["POSTGRES_PORT"],
-	}
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.environ["POSTGRES_DB"],
+        "USER": os.environ["POSTGRES_USER"],
+        "PASSWORD": os.environ["POSTGRES_PASSWORD"],
+        "HOST": os.environ["POSTGRES_HOST"],
+        "PORT": os.environ["POSTGRES_PORT"],
+    }
 }
 
 AUTH_USER_MODEL = "user.User"
@@ -113,18 +113,18 @@ AUTH_USER_MODEL = "user.User"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
-	{
-		"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
-	},
-	{
-		"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
-	},
-	{
-		"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
-	},
-	{
-		"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
-	},
+    {
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
+    },
+    {
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
+    },
+    {
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
+    },
+    {
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
+    },
 ]
 
 
@@ -151,24 +151,24 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 REST_FRAMEWORK = {
-	"DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
-	"DEFAULT_THROTTLE_CLASSES": [
-		"rest_framework.throttling.AnonRateThrottle",
-		"rest_framework.throttling.UserRateThrottle",
-	],
-	"DEFAULT_THROTTLE_RATES": {"anon": "3/minute", "user": "10/minute"},
-	"DEFAULT_AUTHENTICATION_CLASSES": (
-		"rest_framework_simplejwt.authentication.JWTAuthentication",
-	),
-	"DEFAULT_FILTER_BACKENDS": (
-		"django_filters.rest_framework.DjangoFilterBackend",
-	),
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    "DEFAULT_THROTTLE_CLASSES": [
+        "rest_framework.throttling.AnonRateThrottle",
+        "rest_framework.throttling.UserRateThrottle",
+    ],
+    "DEFAULT_THROTTLE_RATES": {"anon": "3/minute", "user": "10/minute"},
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ),
+    "DEFAULT_FILTER_BACKENDS": (
+        "django_filters.rest_framework.DjangoFilterBackend",
+    ),
 }
 
 SIMPLE_JWT = {
-	"ACCESS_TOKEN_LIFETIME": timedelta(minutes=180),
-	"REFRESH_TOKEN_LIFETIME": timedelta(days=3),
-	"ROTATE_REFRESH_TOKENS": False,
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=180),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=3),
+    "ROTATE_REFRESH_TOKENS": False,
 }
 
 STRIPE_SECRET_KEY = os.getenv("STRIPE_API_KEY")
@@ -182,21 +182,21 @@ CELERY_RESULT_SERIALIZER = "json"
 CELERY_TIMEZONE = "UTC"
 
 SPECTACULAR_SETTINGS = {
-	"TITLE": "Library Service",
-	"DESCRIPTION": "Library Service API",
-	"VERSION": "1.0.0",
-	"SERVE_INCLUDE_SCHEMA": False,
-	"SWAGGER_UI_SETTINGS": {
-		"deepLinking": True,
-		"defaultModelRendering": "model",
-		"defaultModelsExpandDepth": 2,
-		"defaultModelExpandDepth": 2,
-	},
+    "TITLE": "Library Service",
+    "DESCRIPTION": "Library Service API",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+    "SWAGGER_UI_SETTINGS": {
+        "deepLinking": True,
+        "defaultModelRendering": "model",
+        "defaultModelsExpandDepth": 2,
+        "defaultModelExpandDepth": 2,
+    },
 }
 
 CELERY_BEAT_SCHEDULE = {
-	"Task_one_schedule": {
-		"task": "borrowing.tasks.check_overdue_borrowings",
-		"schedule": crontab(minute=0, hour=0),
-	}
+    "Task_one_schedule": {
+        "task": "borrowing.tasks.check_overdue_borrowings",
+        "schedule": crontab(minute=0, hour=0),
+    }
 }

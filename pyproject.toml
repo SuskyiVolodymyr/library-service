@@ -18,8 +18,14 @@ exclude = '''
 
 [tool.ruff]
 line-length = 79
+exclude = ["tests", "settings.py", "migrations"]
 
-[tool.ruff.format]
-quote-style = "double"
-indent-style = "tab"
-docstring-code-format = true
+[tool.ruff.lint]
+select = [
+    "ANN",
+    "E",
+]
+
+ignore = ["ANN101", "ANN102", "ANN401", "ANN002", "ANN003"]
+
+per-file-ignores = {"__init__.py" = ["F401"]}
