@@ -30,6 +30,7 @@ class BorrowingViewSet(viewsets.ModelViewSet):
         "book"
     )
     permission_classes = [IsAuthenticated]
+    filterset_fields = ("user_id",)
 
     def get_serializer_class(self):
         """
@@ -50,11 +51,7 @@ class BorrowingViewSet(viewsets.ModelViewSet):
         if not user.is_staff:
             queryset = queryset.filter(user=user)
 
-        user_id = self.request.query_params.get("user_id")
         is_active = self.request.query_params.get("is_active")
-
-        if user.is_staff and user_id:
-            queryset = queryset.filter(user__id=user_id)
 
         if is_active is not None:
             is_active = is_active.lower() == "true"
@@ -106,15 +103,9 @@ class BorrowingViewSet(viewsets.ModelViewSet):
     @extend_schema(
         parameters=[
             OpenApiParameter(
-                name="user_id",
-                description="Filter borrowings by user ID.",
-                required=False,
-                type=int,
-            ),
-            OpenApiParameter(
                 name="is_active",
                 description="Filter borrowings "
-                            "by whether they are active or not.",
+                "by whether they are active or not.",
                 required=False,
                 type=str,
             ),
