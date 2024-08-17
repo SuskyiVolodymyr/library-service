@@ -1,5 +1,6 @@
 import datetime
 
+from django.db import transaction
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from drf_spectacular.utils import OpenApiParameter, extend_schema
@@ -88,17 +89,18 @@ class BorrowingViewSet(viewsets.ModelViewSet):
         borrowing = get_object_or_404(Borrowing, pk=pk)
         if borrowing.actual_return_date:
             raise ValidationError("You already returned book")
-        borrowing.actual_return_date = datetime.date.today()
-        borrowing.save()
-        for book in borrowing.book.all():
-            book.inventory += 1
-            book.save()
-        if borrowing.expected_return_date < borrowing.actual_return_date:
-            return fine_payment(borrowing=borrowing)
+        with transaction.atomic():
+            borrowing.actual_return_date = datetime.date.today()
+            borrowing.save()
+            for book in borrowing.book.all():
+                book.inventory += 1
+                book.save()
+            if borrowing.expected_return_date < borrowing.actual_return_date:
+                return fine_payment(borrowing=borrowing)
 
-        serializer = BorrowingSerializer(borrowing)
+            serializer = BorrowingSerializer(borrowing)
 
-        return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
     @extend_schema(
         parameters=[
