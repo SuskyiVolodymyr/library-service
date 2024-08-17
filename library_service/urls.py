@@ -20,27 +20,27 @@ from django.contrib import admin
 from django.urls import path
 from django.urls.conf import include
 from drf_spectacular.views import (
-    SpectacularAPIView,
-    SpectacularSwaggerView,
-    SpectacularRedocView,
+	SpectacularAPIView,
+	SpectacularSwaggerView,
+	SpectacularRedocView,
 )
 
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
-    path("api/books/", include("book.urls", namespace="book")),
-    path("api/borrowings/", include("borrowing.urls", namespace="borrowings")),
-    path("api/payment/", include("payment.urls", namespace="payment")),
-    path("api/user/", include("user.urls", namespace="user")),
-    path("api/doc/", SpectacularAPIView.as_view(), name="schema"),
-    path(
-        "api/doc/swagger/",
-        SpectacularSwaggerView.as_view(url_name="schema"),
-        name="swagger-ui",
-    ),
-    path(
-        "api/doc/redoc/",
-        SpectacularRedocView.as_view(url_name="schema"),
-        name="redoc",
-    ),
+	path("admin/", admin.site.urls),
+	path("api/books/", include("book.urls", namespace="book")),
+	path("api/borrowings/", include("borrowing.urls", namespace="borrowings")),
+	path("api/payment/", include("payment.urls", namespace="payment")),
+	path("api/user/", include("user.urls", namespace="user")),
+	path("api/doc/", SpectacularAPIView.as_view(), name="schema"),
+	path(
+		"api/doc/swagger/",
+		SpectacularSwaggerView.as_view(url_name="schema"),
+		name="swagger-ui",
+	),
+	path(
+		"api/doc/redoc/",
+		SpectacularRedocView.as_view(url_name="schema"),
+		name="redoc",
+	),
 ] + debug_toolbar_urls()
