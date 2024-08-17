@@ -26,7 +26,9 @@ class BorrowingViewSet(viewsets.ModelViewSet):
     - The queryset is filtered based on the authenticated user.
     """
 
-    queryset = Borrowing.objects.select_related("user").prefetch_related("book")
+    queryset = Borrowing.objects.select_related("user").prefetch_related(
+        "book"
+    )
     permission_classes = [IsAuthenticated]
 
     def get_serializer_class(self):
@@ -39,7 +41,8 @@ class BorrowingViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         """
-        Return a filtered queryset depending on the user's permissions and query parameters.
+        Return a filtered queryset depending
+        on the user's permissions and query parameters.
         """
         queryset = super().get_queryset()
         user = self.request.user
@@ -78,9 +81,12 @@ class BorrowingViewSet(viewsets.ModelViewSet):
         url_path="return",
         permission_classes=[IsAuthenticated],
     )
-    def return_book(self, request: Request, pk=None) -> Response | JsonResponse:
+    def return_book(
+        self, request: Request, pk=None
+    ) -> Response | JsonResponse:
         """
-        Return a borrowed book. If the book is returned late, a fine payment is processed.
+        Return a borrowed book. If the book is returned late,
+        a fine payment is processed.
         """
         borrowing = get_object_or_404(Borrowing, pk=pk)
         if borrowing.actual_return_date:
@@ -107,7 +113,8 @@ class BorrowingViewSet(viewsets.ModelViewSet):
             ),
             OpenApiParameter(
                 name="is_active",
-                description="Filter borrowings by whether they are active or not.",
+                description="Filter borrowings "
+                            "by whether they are active or not.",
                 required=False,
                 type=str,
             ),

@@ -29,7 +29,11 @@ class Migration(migrations.Migration):
                 (
                     "status",
                     django_enum.fields.EnumCharField(
-                        choices=[("1", "Pending"), ("2", "Paid"), ("3", "Canceled")],
+                        choices=[
+                            ("1", "Pending"),
+                            ("2", "Paid"),
+                            ("3", "Canceled"),
+                        ],
                         max_length=1,
                     ),
                 ),
@@ -41,7 +45,10 @@ class Migration(migrations.Migration):
                 ),
                 ("session_url", models.URLField(max_length=500)),
                 ("session_id", models.CharField(max_length=100)),
-                ("money_to_pay", models.DecimalField(decimal_places=2, max_digits=10)),
+                (
+                    "money_to_pay",
+                    models.DecimalField(decimal_places=2, max_digits=10),
+                ),
                 (
                     "borrowing",
                     models.ForeignKey(

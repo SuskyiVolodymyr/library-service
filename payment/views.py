@@ -16,8 +16,10 @@ class PaymentSuccessView(APIView):
     def get(self, request, *args, **kwargs):
         """
         Handles successful payments.
-        Retrieves the payment using the borrowing ID ("borrowing") and payment type ("payment_type") from the request.
-        Updates the payment status to successful and sends a notification via Telegram.
+        Retrieves the payment using the borrowing ID ("borrowing")
+        and payment type ("payment_type") from the request.
+        Updates the payment status to successful
+        and sends a notification via Telegram.
         Returns a JSON response indicating success.
         """
         borrowing = Borrowing.objects.get(id=kwargs["pk"])
@@ -41,8 +43,10 @@ class PaymentCancelView(APIView):
         """
         Handles canceled or failed payments.
 
-        Retrieves the payment using the borrowing ID ("borrowing") and payment type ("payment_type") from the request.
-        Updates the payment status to canceled/failed and sends a notification via Telegram.
+        Retrieves the payment using the borrowing ID ("borrowing")
+        and payment type ("payment_type") from the request.
+        Updates the payment status to canceled/failed
+        and sends a notification via Telegram.
         Returns a JSON response indicating success.
         """
         borrowing = Borrowing.objects.get(id=kwargs["pk"])
@@ -61,11 +65,14 @@ class PaymentCancelView(APIView):
         return JsonResponse({"message": "Payment was canceled or failed."})
 
 
-class PaymentViewSet(GenericViewSet, mixins.ListModelMixin, mixins.RetrieveModelMixin):
+class PaymentViewSet(
+    GenericViewSet, mixins.ListModelMixin, mixins.RetrieveModelMixin
+):
     """
     ViewSet for managing payments.
 
-    Allows retrieving a list of payments and individual payments. Supports filtering by payment status.
+    Allows retrieving a list of payments and individual payments.
+    Supports filtering by payment status.
     """
 
     queryset = Payment.objects.select_related("borrowing")
@@ -81,13 +88,14 @@ class PaymentViewSet(GenericViewSet, mixins.ListModelMixin, mixins.RetrieveModel
 
     def get_queryset(self):
         """
-        Returns the filtered queryset based on query parameters and user permissions.
+        Returns the filtered queryset based on query parameters
+        and user permissions.
         Filters payments by status (canceled/paid/pending) and user.
         Returns the filtered queryset.
         """
-        queryset = self.queryset.select_related("borrowing__user").prefetch_related(
-            "borrowing__book"
-        )
+        queryset = self.queryset.select_related(
+            "borrowing__user"
+        ).prefetch_related("borrowing__book")
         status = self.request.query_params.get("status")
         if status == "canceled":
             queryset = queryset.filter(status="3")
@@ -103,7 +111,7 @@ class PaymentViewSet(GenericViewSet, mixins.ListModelMixin, mixins.RetrieveModel
         parameters=[
             OpenApiParameter(
                 name="status",
-                description="Filter payments by status (canceled/paid/pending).",
+                description="Filter payments by status",
                 required=False,
                 type=str,
             )

@@ -52,11 +52,12 @@ INSTALLED_APPS = [
     "drf_spectacular",
     "rest_framework",
     "debug_toolbar",
+    "django_filters",
+    "django_celery_beat",
     "user",
     "book",
     "borrowing",
     "payment",
-    "django_celery_beat",
 ]
 
 MIDDLEWARE = [

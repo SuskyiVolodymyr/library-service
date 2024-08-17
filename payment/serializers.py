@@ -8,7 +8,8 @@ class PaymentSerializer(serializers.ModelSerializer):
     """
     Serializer for the Payment model.
     Attributes:
-        borrowing (BorrowingSerializer): The serializer for the related borrowing.
+        borrowing (BorrowingSerializer):
+        The serializer for the related borrowing.
         status (CharField): Human-readable status of the payment.
         payment_type (CharField): Human-readable type of payment.
     """

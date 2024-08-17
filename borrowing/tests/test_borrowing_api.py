@@ -31,7 +31,8 @@ class BorrowingUserTests(APITestCase):
             daily_fee=1.50,
         )
         self.borrowing = Borrowing.objects.create(
-            expected_return_date=(date.today() + timedelta(days=10)), user=self.user
+            expected_return_date=(date.today() + timedelta(days=10)),
+            user=self.user,
         )
         self.borrowing.book.set([self.book])
         self.borrowing_url = reverse("borrowings:borrowing-list")
@@ -65,7 +66,8 @@ class BorrowingUserTests(APITestCase):
         response = self.client.post(self.borrowing_url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn(
-            "The expected return date cannot be earlier than the borrowing date.",
+            "The expected return date "
+            "cannot be earlier than the borrowing date.",
             str(response.data),
         )
 
@@ -88,7 +90,9 @@ class BorrowingUserTests(APITestCase):
             actual_return_date=(date.today() + timedelta(days=9)),
         )
         borrowing.book.add(self.book)
-        return_url = reverse("borrowings:borrowing-return-book", args=[borrowing.id])
+        return_url = reverse(
+            "borrowings:borrowing-return-book", args=[borrowing.id]
+        )
         self.client.force_authenticate(user=self.user)
         response = self.client.get(return_url)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -139,11 +143,14 @@ class BorrowingAdminTests(APITestCase):
             last_name="User",
         )
         another_borrowing = Borrowing.objects.create(
-            expected_return_date=(date.today() + timedelta(days=5)), user=another_user
+            expected_return_date=(date.today() + timedelta(days=5)),
+            user=another_user,
         )
         another_borrowing.book.set([self.book])
 
-        response = self.client.get(self.borrowing_url, {"user_id": another_user.id})
+        response = self.client.get(
+            self.borrowing_url, {"user_id": another_user.id}
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 1)
         self.assertEqual(response.data[0]["id"], another_borrowing.id)

@@ -31,7 +31,10 @@ def payment_create_borrowing(borrowing_id) -> JsonResponse:
         borrowing_days.days * int(sum(book.daily_fee for book in books)) * 100
     )
     return payment_helper(
-        borrowing=borrowing, money_to_pay=money_to_pay, books=books, payment_type="1"
+        borrowing=borrowing,
+        money_to_pay=money_to_pay,
+        books=books,
+        payment_type="1",
     )
 
 
@@ -41,11 +44,14 @@ def fine_payment(borrowing: Borrowing) -> JsonResponse:
 
     Calculates the fine for overdue books based on the number of overdue days
     and the daily fees of the books, applying a multiplier for the fine.
-    Creates a Stripe checkout session where the user can complete the fine payment.
+    Creates a Stripe checkout session
+    where the user can complete the fine payment.
     Returns a JSON response with the session URL and ID.
     """
     books = borrowing.book.all()
-    overdue_days = borrowing.actual_return_date - borrowing.expected_return_date
+    overdue_days = (
+        borrowing.actual_return_date - borrowing.expected_return_date
+    )
     money_to_pay = (
         overdue_days.days
         * int(sum(book.daily_fee for book in books))
@@ -53,7 +59,10 @@ def fine_payment(borrowing: Borrowing) -> JsonResponse:
         * FINE_MULTIPLIER
     )
     return payment_helper(
-        borrowing=borrowing, money_to_pay=money_to_pay, books=books, payment_type="2"
+        borrowing=borrowing,
+        money_to_pay=money_to_pay,
+        books=books,
+        payment_type="2",
     )
 
 
@@ -64,7 +73,8 @@ def payment_helper(
     Creates a Stripe checkout session and records payment details.
 
     Handles the interaction with Stripe to create a checkout session based on
-    the borrowing details. Records the payment session information in the database
+    the borrowing details.
+    Records the payment session information in the database
     for future reference and provides the checkout URL to the user.
     Returns a JSON response with the session URL and ID.
     """
@@ -78,7 +88,9 @@ def payment_helper(
                         "price_data": {
                             "currency": "usd",
                             "product_data": {
-                                "name": ", ".join([book.title for book in books]),
+                                "name": ", ".join(
+                                    [book.title for book in books]
+                                ),
                             },
                             "unit_amount": money_to_pay,
                         },
@@ -86,8 +98,10 @@ def payment_helper(
                     },
                 ],
                 mode="payment",
-                success_url=f"{domain}/api/payment/success/{borrowing.id}/?payment_type={payment_type}",
-                cancel_url=f"{domain}/api/payment/cancel/{borrowing.id}/?payment_type={payment_type}",
+                success_url=f"{domain}/api/payment/success/"
+                            f"{borrowing.id}/?payment_type={payment_type}",
+                cancel_url=f"{domain}/api/payment/cancel/"
+                           f"{borrowing.id}/?payment_type={payment_type}",
             )
             Payment.objects.create(
                 status="1",
@@ -98,21 +112,26 @@ def payment_helper(
                 money_to_pay=round(money_to_pay / 100, 2),
             )
             return JsonResponse(
-                {"checkout_url": checkout_session.url}, status=status.HTTP_201_CREATED
+                {"checkout_url": checkout_session.url},
+                status=status.HTTP_201_CREATED,
             )
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=400)
 
 
 def telegram_payment_notification(
-    payment: Payment, borrowing: Borrowing, payment_status: str, payment_type: str
+    payment: Payment,
+    borrowing: Borrowing,
+    payment_status: str,
+    payment_type: str,
 ) -> None:
     """
     Sends a notification about the payment status via Telegram.
 
-    Formats and sends a message to a predefined Telegram chat, providing detailed
-    information about the payment status, the user who made the payment, the
-    books involved, and the payment amount.
+    Formats and sends a message to a predefined Telegram chat,
+    providing detailed information about the payment status,
+    the user who made the payment, the books involved,
+    and the payment amount.
     """
     book_titles = ", ".join([book.title for book in borrowing.book.all()])
     message = (

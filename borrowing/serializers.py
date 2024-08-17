@@ -14,7 +14,9 @@ class BorrowingSerializer(serializers.ModelSerializer):
     """
 
     book = BookReadSerializer(read_only=True, many=True)
-    user = serializers.SlugRelatedField(many=False, read_only=True, slug_field="email")
+    user = serializers.SlugRelatedField(
+        many=False, read_only=True, slug_field="email"
+    )
 
     class Meta:
         model = Borrowing
@@ -32,7 +34,8 @@ class BorrowingSerializer(serializers.ModelSerializer):
 class BorrowingCreateSerializer(serializers.ModelSerializer):
     """
     Serializer for creating a new Borrowing instance.
-    Validates that the expected return date is not earlier than the borrowing date.
+    Validates that the expected return date
+    is not earlier than the borrowing date.
     """
 
     class Meta:
@@ -48,13 +51,15 @@ class BorrowingCreateSerializer(serializers.ModelSerializer):
 
         if expected_return_date < borrow_date:
             raise serializers.ValidationError(
-                "The expected return date cannot be earlier than the borrowing date."
+                "The expected return date "
+                "cannot be earlier than the borrowing date."
             )
         return attrs
 
     def create(self, validated_data):
         """
-        Create a new borrowing instance and decrease the inventory of the borrowed books.
+        Create a new borrowing instance
+        and decrease the inventory of the borrowed books.
         Send a notification message via Telegram.
         """
         with transaction.atomic():

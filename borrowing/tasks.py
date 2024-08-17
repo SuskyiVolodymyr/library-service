@@ -12,9 +12,13 @@ def check_overdue_borrowings():
 
     if all_borrowings.exists():
         for borrowing in all_borrowings:
-            books_title = ", ".join(borrowing.book.values_list("title", flat=True))
+            books_title = ", ".join(
+                borrowing.book.values_list("title", flat=True)
+            )
             status = (
-                "Overdue" if borrowing.expected_return_date <= today else "Not overdue"
+                "Overdue"
+                if borrowing.expected_return_date <= today
+                else "Not overdue"
             )
             message = (
                 f"Overdue borrowing: {books_title} by {borrowing.user.email}\n"
