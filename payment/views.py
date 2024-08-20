@@ -1,6 +1,6 @@
+from django.db.models import QuerySet
 from django.http import JsonResponse
-from drf_spectacular.utils import extend_schema, OpenApiParameter
-from rest_framework import mixins
+from rest_framework import mixins, serializers
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.views import APIView
@@ -13,11 +13,13 @@ from payment.serializers import PaymentSerializer, PaymentListSerializer
 
 
 class PaymentSuccessView(APIView):
-    def get(self, request, *args, **kwargs):
+    def get(self, request: Request, *args, **kwargs) -> JsonResponse:
         """
         Handles successful payments.
-        Retrieves the payment using the borrowing ID ("borrowing") and payment type ("payment_type") from the request.
-        Updates the payment status to successful and sends a notification via Telegram.
+        Retrieves the payment using the borrowing ID ("borrowing")
+        and payment type ("payment_type") from the request.
+        Updates the payment status to successful
+        and sends a notification via Telegram.
         Returns a JSON response indicating success.
         """
         borrowing = Borrowing.objects.get(id=kwargs["pk"])
@@ -37,12 +39,14 @@ class PaymentSuccessView(APIView):
 
 
 class PaymentCancelView(APIView):
-    def get(self, request: Request, *args, **kwargs):
+    def get(self, request: Request, *args, **kwargs) -> JsonResponse:
         """
         Handles canceled or failed payments.
 
-        Retrieves the payment using the borrowing ID ("borrowing") and payment type ("payment_type") from the request.
-        Updates the payment status to canceled/failed and sends a notification via Telegram.
+        Retrieves the payment using the borrowing ID ("borrowing")
+        and payment type ("payment_type") from the request.
+        Updates the payment status to canceled/failed
+        and sends a notification via Telegram.
         Returns a JSON response indicating success.
         """
         borrowing = Borrowing.objects.get(id=kwargs["pk"])
@@ -61,17 +65,21 @@ class PaymentCancelView(APIView):
         return JsonResponse({"message": "Payment was canceled or failed."})
 
 
-class PaymentViewSet(GenericViewSet, mixins.ListModelMixin, mixins.RetrieveModelMixin):
+class PaymentViewSet(
+    GenericViewSet, mixins.ListModelMixin, mixins.RetrieveModelMixin
+):
     """
     ViewSet for managing payments.
 
-    Allows retrieving a list of payments and individual payments. Supports filtering by payment status.
+    Allows retrieving a list of payments and individual payments.
+    Supports filtering by payment status.
     """
 
     queryset = Payment.objects.select_related("borrowing")
     permission_classes = [IsAuthenticated]
+    filterset_fields = ("status",)
 
-    def get_serializer_class(self):
+    def get_serializer_class(self) -> serializers.SerializerMetaclass:
         """
         Return the appropriate serializer class based on the action.
         """
@@ -79,38 +87,16 @@ class PaymentViewSet(GenericViewSet, mixins.ListModelMixin, mixins.RetrieveModel
             return PaymentListSerializer
         return PaymentSerializer
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet:
         """
-        Returns the filtered queryset based on query parameters and user permissions.
+        Returns the filtered queryset based on query parameters
+        and user permissions.
         Filters payments by status (canceled/paid/pending) and user.
         Returns the filtered queryset.
         """
-        queryset = self.queryset.select_related("borrowing__user").prefetch_related(
-            "borrowing__book"
-        )
-        status = self.request.query_params.get("status")
-        if status == "canceled":
-            queryset = queryset.filter(status="3")
-        if status == "paid":
-            queryset = queryset.filter(status="2")
-        if status == "pending":
-            queryset = queryset.filter(status="1")
+        queryset = self.queryset.select_related(
+            "borrowing__user"
+        ).prefetch_related("borrowing__book")
         if not self.request.user.is_staff:
             return queryset.filter(borrowing__user_id=self.request.user.id)
         return queryset
-
-    @extend_schema(
-        parameters=[
-            OpenApiParameter(
-                name="status",
-                description="Filter payments by status (canceled/paid/pending).",
-                required=False,
-                type=str,
-            )
-        ]
-    )
-    def list(self, request, *args, **kwargs):
-        """
-        List payments with optional filtering by status.
-        """
-        return super().list(request, *args, **kwargs)

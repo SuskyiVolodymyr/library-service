@@ -5,7 +5,6 @@ from borrowing.models import Borrowing
 
 
 class Payment(models.Model):
-
     class StatusEnum(models.TextChoices):
         pending = "1", "Pending"
         paid = "2", "Paid"

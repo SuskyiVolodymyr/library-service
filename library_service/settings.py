@@ -52,11 +52,12 @@ INSTALLED_APPS = [
     "drf_spectacular",
     "rest_framework",
     "debug_toolbar",
+    "django_filters",
+    "django_celery_beat",
     "user",
     "book",
     "borrowing",
     "payment",
-    "django_celery_beat",
 ]
 
 MIDDLEWARE = [
@@ -158,6 +159,9 @@ REST_FRAMEWORK = {
     "DEFAULT_THROTTLE_RATES": {"anon": "3/minute", "user": "10/minute"},
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ),
+    "DEFAULT_FILTER_BACKENDS": (
+        "django_filters.rest_framework.DjangoFilterBackend",
     ),
 }
 

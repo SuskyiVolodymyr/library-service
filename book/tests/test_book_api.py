@@ -45,12 +45,18 @@ class AdminBookTests(TestCase):
         res = self.client.post(url, payload)
 
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
-        book = Book.objects.get(title="Sample Book", author="Author Name", cover="HARD")
+        book = Book.objects.get(
+            title="Sample Book", author="Author Name", cover="HARD"
+        )
         self.assertEqual(book.inventory, 15)
 
     def test_update_existing_book_merges_inventory(self):
-        book1 = sample_book(title="Sample Book", author="Author Name", cover="HARD")
-        book2 = sample_book(title="Another Book", author="Another Author", cover="SOFT")
+        book1 = sample_book(
+            title="Sample Book", author="Author Name", cover="HARD"
+        )
+        book2 = sample_book(
+            title="Another Book", author="Another Author", cover="SOFT"
+        )
 
         payload = {
             "title": "Sample Book",
@@ -69,8 +75,12 @@ class AdminBookTests(TestCase):
         self.assertEqual(book1.inventory, 15)
 
     def test_partial_update_existing_book_merges_inventory(self):
-        book1 = sample_book(title="Sample Book", author="Author Name", cover="HARD")
-        book2 = sample_book(title="Another Book", author="Another Author", cover="SOFT")
+        book1 = sample_book(
+            title="Sample Book", author="Author Name", cover="HARD"
+        )
+        book2 = sample_book(
+            title="Another Book", author="Another Author", cover="SOFT"
+        )
 
         payload = {
             "title": "Sample Book",
@@ -100,7 +110,9 @@ class AdminBookTests(TestCase):
         res = self.client.post(url, payload)
 
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
-        book = Book.objects.get(title="New Book", author="New Author", cover="SOFT")
+        book = Book.objects.get(
+            title="New Book", author="New Author", cover="SOFT"
+        )
         self.assertEqual(book.inventory, 5)
 
     def test_read_book_inventory(self):

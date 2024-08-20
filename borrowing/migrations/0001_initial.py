@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
@@ -26,10 +25,15 @@ class Migration(migrations.Migration):
                 ),
                 ("borrow_date", models.DateField(auto_now_add=True)),
                 ("expected_return_date", models.DateField()),
-                ("actual_return_date", models.DateField(blank=True, null=True)),
+                (
+                    "actual_return_date",
+                    models.DateField(blank=True, null=True),
+                ),
                 (
                     "book",
-                    models.ManyToManyField(related_name="borrowings", to="book.book"),
+                    models.ManyToManyField(
+                        related_name="borrowings", to="book.book"
+                    ),
                 ),
             ],
         ),

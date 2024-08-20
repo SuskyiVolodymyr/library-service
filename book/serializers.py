@@ -9,7 +9,7 @@ class BookSerializer(serializers.ModelSerializer):
         model = Book
         fields = ["id", "title", "author", "cover", "inventory", "daily_fee"]
 
-    def create(self, validated_data):
+    def create(self, validated_data: dict) -> Book:
         """Create a book, if one does not exist yet, or combine."""
         book = Book.objects.filter(
             title=validated_data["title"],
@@ -23,7 +23,7 @@ class BookSerializer(serializers.ModelSerializer):
             return book
         return Book.objects.create(**validated_data)
 
-    def update(self, instance, validated_data):
+    def update(self, instance: Book, validated_data: dict) -> Book:
         """Update and return an existing book."""
         book = Book.objects.filter(
             title=validated_data["title"],

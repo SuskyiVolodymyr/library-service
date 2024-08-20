@@ -10,7 +10,7 @@ CHAT_ID = os.getenv("CHAT_ID")
 bot = telebot.TeleBot(BOT_TOKEN)
 
 
-def send_message(text):
+def send_message(text: str) -> dict:
     """
     Send a message to the Telegram chat.
     """
@@ -18,4 +18,7 @@ def send_message(text):
         bot.send_message(CHAT_ID, text)
         return {"success": True, "message": "Message sent successfully"}
     except Exception as e:
-        return {"success": False, "message": f"Failed to send message: {str(e)}"}
+        return {
+            "success": False,
+            "message": f"Failed to send message: {str(e)}",
+        }

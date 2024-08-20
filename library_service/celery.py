@@ -21,5 +21,5 @@ app.conf.beat_schedule = {
 
 
 @app.task(bind=True, ignore_result=True)
-def debug_task(self):
+def debug_task(self: any) -> None:
     print(f"Request: {self.request!r}")
